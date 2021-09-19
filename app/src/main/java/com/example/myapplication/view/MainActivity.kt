@@ -1,17 +1,19 @@
 package com.example.myapplication.view
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.MainViewModel
-import com.example.myapplication.MovieAdapter
+import com.example.myapplication.adapters.MovieAdapter
 import com.example.myapplication.MovieClickListener
 import com.example.myapplication.R
 import com.example.myapplication.network.Movie
@@ -23,21 +25,31 @@ class MainActivity : AppCompatActivity(), MovieClickListener {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
+    private lateinit var etSearch: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val etSearch = findViewById<EditText>(R.id.et_search)
+        etSearch = findViewById(R.id.et_search)
         etSearch.addTextChangedListener(textWatcher)
 
         viewModel.movieListLiveData.observe(this, {
             if (it.response == "True") {
                 updateRecyclerView()
             } else {
-                Toast.makeText(applicationContext, it.error, Toast.LENGTH_SHORT)
-                    .show()
+                Log.e("result", it.toString())
+//                if (it.error.isNotEmpty()){
+//                    Toast.makeText(applicationContext, it.error, Toast.LENGTH_SHORT)
+//                        .show()
+//                }
             }
         })
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        viewModel.mSearchText.value?.let { viewModel.searchMovies(it) }
     }
 
     private val textWatcher = object : TextWatcher {
@@ -61,7 +73,7 @@ class MainActivity : AppCompatActivity(), MovieClickListener {
     }
 
     override fun onMovieClickListener(data: Movie) {
-        Toast.makeText(this,"onMovieClickListener, $data", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this,"onMovieClickListener, $data", Toast.LENGTH_SHORT).show()
 
         val id = data.imdbID
         val intent = Intent(this, MovieDetailActivity::class.java)

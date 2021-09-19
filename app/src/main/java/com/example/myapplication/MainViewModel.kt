@@ -24,12 +24,19 @@ class MainViewModel(private val repository: Repository = Repository(ApiClient.ap
     val movieLiveData: LiveData<MovieDetail>
         get() = _movieLiveData
 
+    private var _mSearchText: MutableLiveData<String> = MutableLiveData()
+    val mSearchText: LiveData<String>
+        get() = _mSearchText
+
     private val apiKey = "320f6ab2"
 
     fun searchMovies(searchText: String) {
         Log.e("searchMovies()", "")
+        if (searchText.isEmpty())
+            return
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                _mSearchText = MutableLiveData(searchText)
                 val client = repository.searchMovies(searchText, apiKey)
                 _movieListLiveData.postValue(client)
             } catch (throwable: Throwable) {
@@ -42,6 +49,8 @@ class MainViewModel(private val repository: Repository = Repository(ApiClient.ap
 
     fun searchMovieById(id: String) {
         Log.e("searchMovieById()", "id $id")
+        if (id.isNullOrEmpty())
+            return
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val client = repository.searchMovieById(id, apiKey)
