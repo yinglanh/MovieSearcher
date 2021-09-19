@@ -12,5 +12,8 @@ data class SearchResponse(
     val totalResults: String,
     @Expose
     @SerializedName("Response")
-    val response: String
+    val response: String,
+    @Expose
+    @SerializedName("Error")
+    val error: String
 )

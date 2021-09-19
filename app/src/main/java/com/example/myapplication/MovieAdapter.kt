@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.myapplication.network.Movie
 
-class MovieAdapter(private val movies: List<Movie>) :
+class MovieAdapter(
+    private val myMovieClickListener: MovieClickListener,
+    private val movies: List<Movie>
+) :
     RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,6 +36,11 @@ class MovieAdapter(private val movies: List<Movie>) :
 
     override fun onBindViewHolder(holder: MovieAdapter.ViewHolder, position: Int) {
         holder.bind(movies[position])
+
+        holder.itemView.setOnClickListener {
+            Log.e("onMovieClick","${movies[position]}")
+            myMovieClickListener.onMovieClickListener(movies[position])
+        }
     }
 
     override fun getItemCount(): Int {

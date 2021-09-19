@@ -23,10 +23,18 @@ object ApiClient {
             .build()
             .create(ApiService::class.java)
     }
-
 }
 
 interface ApiService {
     @GET(".")
-    suspend fun fetchMovies(@Query("s") searchText: String, @Query("apikey") key: String): SearchResponse
+    suspend fun fetchMovies(
+        @Query("s") searchText: String,
+        @Query("apikey") key: String
+    ): SearchResponse
+
+    @GET(".")
+    suspend fun fetchMovieById(
+        @Query("i") id: String,
+        @Query("apikey") key: String
+    ): MovieDetail
 }
