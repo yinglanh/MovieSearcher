@@ -3,16 +3,22 @@ package com.example.myapplication.view
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.MainViewModel
 import com.example.myapplication.R
 import com.example.myapplication.network.MovieDetail
+import com.example.myapplication.databinding.ActivityMovieDetailBinding
+
 
 class MovieDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movie_detail)
+
+        val binding: ActivityMovieDetailBinding = DataBindingUtil.setContentView(
+            this, R.layout.activity_movie_detail
+        )
 
         val viewModel: MainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
@@ -26,12 +32,8 @@ class MovieDetailActivity : AppCompatActivity() {
 
         viewModel.movieLiveData.observe(this, {
             if (viewModel.movieLiveData.value?.response == "True") {
-                updateMovieDetail(it)
+                binding.movieDetail = it
             }
         })
-    }
-
-    private fun updateMovieDetail(movieDetail: MovieDetail){
-        findViewById<TextView>(R.id.tv_movie_title).text = movieDetail.title
     }
 }
